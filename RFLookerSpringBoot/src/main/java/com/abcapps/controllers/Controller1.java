@@ -1,7 +1,10 @@
 package com.abcapps.controllers;
 
+
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +17,9 @@ import com.abcapps.dto.User;
 public class Controller1 {
 
 	@PostMapping(value = "/register")
-	public void m1(@Valid @RequestBody User user) {
+	public ResponseEntity<Object> m1(@Valid @RequestBody User user) {
 		System.out.println("Request came:: " + user);
+		return new ResponseEntity<>(HttpStatus.OK);
+
 	}
 }
