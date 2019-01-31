@@ -1,0 +1,18 @@
+{
+	"auth/register": {
+		"1001": "Unexpected parameter in request",
+		"1002": "Name is required",
+		"1003": "Mobile no is required",
+		"1004": "Email id is required",
+		"1005": "Email is is invalid",
+		"1006": "Password is required",
+		"1007": "Confirm password is required",
+		"1008": "Device details missing",
+		"1009": "IMEI is missing",
+		"1010": "Device manufacturer name is missing",
+		"1011": "Device brand name is missing ",
+		"1012": "Device model is missing",
+		"1013": "OS version is missing",
+		"1014": "App version is missing"
+	}
+}
