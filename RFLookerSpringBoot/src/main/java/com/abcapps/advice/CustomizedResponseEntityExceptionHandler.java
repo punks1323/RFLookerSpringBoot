@@ -29,6 +29,6 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 			errorList.add(e.getDefaultMessage());
 		}
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), "Validation Failed", errorList);
-		return new ResponseEntity(errorDetails, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<Object>(errorDetails, HttpStatus.BAD_REQUEST);
 	}
 }

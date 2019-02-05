@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abcapps.dto.UserDTO;
+import com.abcapps.Entities.User;
 import com.abcapps.exception.EmailIdAlreadyExists;
 import com.abcapps.exception.PasswordNotMatchException;
 import com.abcapps.service.UserService;
@@ -25,10 +25,10 @@ public class AuthController {
 	UserService userService;
 
 	@PostMapping(value = "/register")
-	public ResponseEntity<Object> register(@Valid @RequestBody UserDTO userDto) {
-		System.out.println("Request came:: " + userDto);
+	public ResponseEntity<Object> register(@Valid @RequestBody User user) {
+		System.out.println("Request came:: " + user);
 		try {
-			return new ResponseEntity<>(userService.saveUser(userDto), HttpStatus.CREATED);
+			return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
 		} catch (EmailIdAlreadyExists e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
