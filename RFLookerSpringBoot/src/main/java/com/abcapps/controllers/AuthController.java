@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.abcapps.Entities.User;
 import com.abcapps.exception.EmailIdAlreadyExists;
+import com.abcapps.exception.MobileNoAlreadyExists;
 import com.abcapps.exception.PasswordNotMatchException;
 import com.abcapps.service.UserService;
 
@@ -33,6 +34,10 @@ public class AuthController {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		} catch (PasswordNotMatchException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		} catch (MobileNoAlreadyExists e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
