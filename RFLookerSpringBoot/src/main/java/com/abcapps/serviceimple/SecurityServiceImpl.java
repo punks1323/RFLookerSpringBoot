@@ -1,4 +1,4 @@
-package com.abcapps.service;
+package com.abcapps.serviceimple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import com.abcapps.Entities.User;
+import com.abcapps.service.SecurityService;
 
 @Service
 public class SecurityServiceImpl implements SecurityService {

@@ -2,6 +2,8 @@ package com.abcapps.controllers;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +24,14 @@ import com.abcapps.service.UserService;
 @RequestMapping("auth")
 public class AuthController {
 
+	Logger log = LoggerFactory.getLogger(AuthController.class);
+
 	@Autowired
 	UserService userService;
 
 	@PostMapping(value = "/register")
 	public ResponseEntity<Object> register(@Valid @RequestBody User user) {
-		System.out.println("Request came:: " + user);
+		log.info("Request came:: " + user);
 		try {
 			return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
 		} catch (EmailIdAlreadyExists e) {
@@ -37,15 +41,17 @@ public class AuthController {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		} catch (MobileNoAlreadyExists e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@GetMapping(value = "/verifyEmail/{uuid}")
 	public ResponseEntity<Object> verifyEmail(@PathVariable String uuid) {
-		System.out.println("Request came for email verification :: " + uuid);
+		log.info("Email verification :: " + uuid);
 		try {
 			return new ResponseEntity<>(
 					userService.verifyEmailByEmailUUID(uuid) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
