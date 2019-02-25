@@ -22,16 +22,15 @@ import com.abcapps.service.UserService;
 
 @RestController
 @RequestMapping("auth")
-public class AuthController {
+public class RegistrationController {
 
-	Logger log = LoggerFactory.getLogger(AuthController.class);
+	Logger log = LoggerFactory.getLogger(RegistrationController.class);
 
 	@Autowired
 	UserService userService;
 
 	@PostMapping(value = "/register")
 	public ResponseEntity<Object> register(@Valid @RequestBody User user) {
-		log.info("Request came:: " + user);
 		try {
 			return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
 		} catch (EmailIdAlreadyExists e) {

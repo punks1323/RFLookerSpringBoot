@@ -9,7 +9,6 @@ import java.util.Set;
 
 @Setter
 @Getter
-@ToString
 @Entity
 @Table(name = "role")
 public class Role {

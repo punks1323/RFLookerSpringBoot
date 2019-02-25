@@ -22,7 +22,7 @@ public class MailServiceImpl implements MailService {
 
 		try {
 			helper.setTo(to);
-			helper.setText(msg);
+			helper.setText(msg,true);
 			helper.setSubject(subject);
 			sender.send(message);
 			return true;

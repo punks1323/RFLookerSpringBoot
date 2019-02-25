@@ -18,7 +18,6 @@ import lombok.ToString;
 
 @Setter
 @Getter
-@ToString
 @Entity
 public class Mobile {
 

@@ -1,6 +1,9 @@
 package com.abcapps.serviceimple;
+
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,7 +19,7 @@ import com.abcapps.Entities.User;
 import com.abcapps.repo.UserRepository;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService{
+public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
@@ -25,11 +28,17 @@ public class UserDetailsServiceImpl implements UserDetailsService{
     public UserDetails loadUserByUsername(String emailId) throws UsernameNotFoundException {
         User user = userRepository.findByEmailId(emailId);
 
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        for (Role role : user.getRoles()){
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+        if (user == null) {
+            throw new UsernameNotFoundException(emailId + " not found");
         }
+        return new org.springframework.security.core.userdetails.User(user.getEmailId(),
+                user.getPassword(),
+                mapRolesToAuthorities(user.getRoles()));
+    }
 
-        return new org.springframework.security.core.userdetails.User(user.getEmailId(), user.getPassword(), grantedAuthorities);
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
     }
 }
