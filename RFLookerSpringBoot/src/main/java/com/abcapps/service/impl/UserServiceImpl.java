@@ -1,18 +1,24 @@
-package com.abcapps.serviceimple;
+package com.abcapps.service.impl;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
 
+import com.abcapps.Entities.SDCard;
+import com.abcapps.repo.DirectoryRepository;
 import com.abcapps.utils.AuthUtils;
 import com.abcapps.utils.StringUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +47,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepo;
 
     @Autowired
+    private DirectoryRepository directoryRepository;
+
+    @Autowired
     private MailService mailService;
 
     @Autowired
@@ -51,6 +60,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private AESMask aesMask;
+
+    @Autowired
+    ObjectMapper mapper;
 
     @Autowired
     Environment env;
@@ -96,7 +108,7 @@ public class UserServiceImpl implements UserService {
                 encode = encode.replaceAll("/", "*");
                 String maskedUrl = URLEncoder.encode(encode, "UTF-8");
 
-                String url = "http://localhost:8080/auth/verifyEmail/" + maskedUrl;
+                String url = "http://localhost:8080/security/verifyEmail/" + maskedUrl;
                 boolean sendMail = mailService.sendMail(user.getEmailId(),
                         StringUtils.getVerifyEmailMsg(url),
                         "Please verify your email id");
@@ -145,24 +157,46 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean saveFileTree(String fileTree) {
-        String emailId = AuthUtils.getLoggedInUser();
-        if (emailId == null)
-            return false;
-
-        File dir = new File(env.getProperty("user.secure.data"),emailId);
-        if (!dir.exists())
-            dir.mkdirs();
-
-        long currentTimeMillis = System.currentTimeMillis();
-        File userDataFile = new File(dir, currentTimeMillis + ".txt");
-
         try {
+            String emailId = AuthUtils.getLoggedInUser();
+            if (emailId == null)
+                return false;
+
+            File dir = new File(env.getProperty("user.secure.data"), emailId);
+            if (!dir.exists())
+                dir.mkdirs();
+            else
+                FileUtils.cleanDirectory(dir);
+
+            long currentTimeMillis = System.currentTimeMillis();
+            File userDataFile = new File(dir, currentTimeMillis + ".txt");
+
+
             FileCopyUtils.copy(fileTree.getBytes(StandardCharsets.UTF_8), userDataFile);
+            User byEmailId = userRepo.findByEmailId(emailId);
+            SDCard SDCard = directoryRepository.findByUser(byEmailId);
+            if (SDCard == null) {
+                SDCard = new SDCard();
+                SDCard.setUser(byEmailId);
+                SDCard.setJsonLocation(userDataFile.getCanonicalPath());
+            } else {
+                SDCard.setJsonLocation(userDataFile.getCanonicalPath());
+            }
+            directoryRepository.save(SDCard);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public String getFileTree() throws IOException {
+        String emailId = AuthUtils.getLoggedInUser();
+        if (emailId == null)
+            return null;
+        SDCard byUser = directoryRepository.findByUser(userRepo.findByEmailId(emailId));
+        return new String(Files.readAllBytes(Paths.get(byUser.getJsonLocation())));
     }
 
 }

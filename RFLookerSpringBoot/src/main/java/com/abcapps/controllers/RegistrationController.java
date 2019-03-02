@@ -21,7 +21,7 @@ import com.abcapps.exception.PasswordNotMatchException;
 import com.abcapps.service.UserService;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/auth")
 public class RegistrationController {
 
 	Logger log = LoggerFactory.getLogger(RegistrationController.class);

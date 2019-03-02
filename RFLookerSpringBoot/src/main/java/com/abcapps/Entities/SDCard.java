@@ -8,12 +8,14 @@ import javax.persistence.*;
 @Entity
 @Setter
 @Getter
-public class RFLookerDirectory {
+public class SDCard {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne(mappedBy = "rfLookerDirectory")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
-    String jsonLocation;
+
+    private String jsonLocation;
 }

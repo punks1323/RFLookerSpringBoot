@@ -1,4 +1,4 @@
-package com.abcapps.serviceimple;
+package com.abcapps.service.impl;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;

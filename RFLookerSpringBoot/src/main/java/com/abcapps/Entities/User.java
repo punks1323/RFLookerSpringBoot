@@ -18,81 +18,79 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Setter
 @Getter
 @Entity
 public class User {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@JsonIgnore
-	@Null(message = "1001")
-	Long id;
-	
-	@NotBlank(message = "1002")
-	String name;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
+    @Null(message = "1001")
+    Long id;
 
-	@NotBlank(message = "1003")
-	@Size(min = 10, max = 10)
-	String mobileNo;
+    @NotBlank(message = "1002")
+    String name;
 
-	@Column(unique = true)
-	@JsonIgnore
-	@Null(message = "1001")
-	String mobileNoOtp;
+    @NotBlank(message = "1003")
+    @Size(min = 10, max = 10)
+    String mobileNo;
 
-	@JsonIgnore
-	@Null(message = "1001")
-	Boolean mobileNoVerified;
+    @Column(unique = true)
+    @JsonIgnore
+    @Null(message = "1001")
+    String mobileNoOtp;
 
-	@Column(unique = true)
-	@NotBlank(message = "1004")
-	@Email(message = "1005")
-	String emailId;
-	
-	@JsonIgnore
-	@Null(message = "1001")
-	String emailIdUuid;
+    @JsonIgnore
+    @Null(message = "1001")
+    Boolean mobileNoVerified;
 
-	@JsonIgnore
-	@Null(message = "1001")
-	Boolean emailIdVerified;
+    @Column(unique = true)
+    @NotBlank(message = "1004")
+    @Email(message = "1005")
+    String emailId;
 
-	@JsonProperty(access = Access.WRITE_ONLY)
-	@NotBlank(message = "1006")
-	@Size(min = 6)
-	String password;
+    @JsonIgnore
+    @Null(message = "1001")
+    String emailIdUuid;
 
-	@JsonProperty(access = Access.WRITE_ONLY)
-	@NotBlank(message = "1007")
-	@Size(min = 6)
-	@Transient
-	String confirmPassword;
+    @JsonIgnore
+    @Null(message = "1001")
+    Boolean emailIdVerified;
 
-	@JsonIgnore
-	@Temporal(TemporalType.TIMESTAMP)
-	@LastModifiedDate
-	Date registrationDate;
-	
-	@JsonIgnore
-	boolean isActive;
+    @JsonProperty(access = Access.WRITE_ONLY)
+    @NotBlank(message = "1006")
+    @Size(min = 6)
+    String password;
 
-	@JsonProperty(access = Access.WRITE_ONLY)
-	@NotNull
-	@OneToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "mobile_imei")
-	Mobile mobile;
-	
-	@JsonIgnore
-	@ManyToMany
+    @JsonProperty(access = Access.WRITE_ONLY)
+    @NotBlank(message = "1007")
+    @Size(min = 6)
+    @Transient
+    String confirmPassword;
+
+    @JsonIgnore
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    Date registrationDate;
+
+    @JsonIgnore
+    boolean isActive;
+
+    @JsonProperty(access = Access.WRITE_ONLY)
+    @NotNull
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "mobile_imei")
+    Mobile mobile;
+
+    @JsonIgnore
+    @ManyToMany
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles;
+    private Set<Role> roles;
 
-	@JsonIgnore
-	@OneToOne
-	@PrimaryKeyJoinColumn
-	private RFLookerDirectory rfLookerDirectory;
+    @JsonIgnore
+    @OneToOne(mappedBy = "user")
+    private SDCard sdcard;
 
 }
