@@ -1,9 +1,8 @@
-package com.abcapps.Entities;
+package com.abcapps.entity;
 import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.util.Set;
 

@@ -1,8 +1,6 @@
 package com.abcapps.service.impl;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.abcapps.Entities.Role;
-import com.abcapps.Entities.User;
+import com.abcapps.entity.Role;
+import com.abcapps.entity.User;
 import com.abcapps.repo.UserRepository;
 
 @Service

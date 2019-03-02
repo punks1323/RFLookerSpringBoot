@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import com.abcapps.Entities.User;
+import com.abcapps.entity.User;
 import com.abcapps.service.SecurityService;
 
 @Service

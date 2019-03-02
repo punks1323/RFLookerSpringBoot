@@ -1,4 +1,4 @@
-package com.abcapps.Entities;
+package com.abcapps.entity;
 
 import lombok.Getter;
 import lombok.Setter;

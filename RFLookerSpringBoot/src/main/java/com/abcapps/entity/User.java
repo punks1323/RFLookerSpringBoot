@@ -1,4 +1,4 @@
-package com.abcapps.Entities;
+package com.abcapps.entity;
 
 import java.util.Date;
 import java.util.Set;

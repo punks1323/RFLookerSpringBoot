@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-import com.abcapps.Entities.SDCard;
+import com.abcapps.entity.SDCard;
 import com.abcapps.repo.DirectoryRepository;
 import com.abcapps.utils.AuthUtils;
 import com.abcapps.utils.StringUtils;
@@ -26,8 +26,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.abcapps.Entities.Role;
-import com.abcapps.Entities.User;
+import com.abcapps.entity.Role;
+import com.abcapps.entity.User;
 import com.abcapps.component.AESMask;
 import com.abcapps.exception.EmailIdAlreadyExists;
 import com.abcapps.exception.MobileNoAlreadyExists;

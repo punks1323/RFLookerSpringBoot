@@ -1,6 +1,6 @@
 package com.abcapps.service;
 
-import com.abcapps.Entities.User;
+import com.abcapps.entity.User;
 import com.abcapps.exception.EmailIdAlreadyExists;
 import com.abcapps.exception.MobileNoAlreadyExists;
 import com.abcapps.exception.PasswordNotMatchException;

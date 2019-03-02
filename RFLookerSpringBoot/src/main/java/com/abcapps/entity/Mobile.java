@@ -1,4 +1,4 @@
-package com.abcapps.Entities;
+package com.abcapps.entity;
 
 import java.util.Date;
 
@@ -14,7 +14,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Setter
 @Getter
