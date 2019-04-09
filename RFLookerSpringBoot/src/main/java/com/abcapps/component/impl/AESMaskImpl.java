@@ -27,7 +27,7 @@ public class AESMaskImpl implements AESMask {
 		sha = MessageDigest.getInstance("SHA-1");
 		key = sha.digest(key);
 		key = Arrays.copyOf(key, 16);
-		secretKey = new SecretKeySpec(key, "AES");
+		secretKey = new SecretKeySpec(key, "AES");;
 	}
 
 	@Override
