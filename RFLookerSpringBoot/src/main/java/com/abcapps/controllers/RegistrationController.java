@@ -53,7 +53,7 @@ public class RegistrationController {
 		log.info("Email verification :: " + uuid);
 		try {
 			return new ResponseEntity<>(
-					userService.verifyEmailByEmailUUID(uuid) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
+					userService.verifyEmailByEmailUUID(uuid) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

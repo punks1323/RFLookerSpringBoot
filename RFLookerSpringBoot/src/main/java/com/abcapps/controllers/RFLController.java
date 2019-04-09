@@ -19,7 +19,7 @@ public class RFLController {
     UserService userService;
 
     @PostMapping(value = "/saveRFLFileTree")
-    public ResponseEntity<Object> saveRFLFileTree(@RequestParam("fileTree") String fileTree) {
+    public ResponseEntity<Object> saveRFLFileTree(@RequestBody String fileTree) {
         try {
             if (userService.saveFileTree(fileTree)) {
                 return new ResponseEntity<>("OK"
@@ -32,7 +32,7 @@ public class RFLController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping(value = "/getRFLFileTree", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/getRFLFileTree", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getFileJson() {
         try {
             return new ResponseEntity<>(userService.getFileTree()

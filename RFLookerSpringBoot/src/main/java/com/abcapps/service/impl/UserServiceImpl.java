@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
                 encode = encode.replaceAll("/", "*");
                 String maskedUrl = URLEncoder.encode(encode, "UTF-8");
 
-                String url = "http://localhost:8080/security/verifyEmail/" + maskedUrl;
+                String url = "http://localhost:8080/auth/verifyEmail/" + maskedUrl;
                 boolean sendMail = mailService.sendMail(user.getEmailId(),
                         StringUtils.getVerifyEmailMsg(url),
                         "Please verify your email id");
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean saveFileTree(String fileTree) {
         try {
-            String emailId = AuthUtils.getLoggedInUser();
+            String emailId = AuthUtils.getLoggedInUserEmailId();
             if (emailId == null)
                 return false;
 
@@ -191,11 +191,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String getFileTree() throws IOException {
-        String emailId = AuthUtils.getLoggedInUser();
-        if (emailId == null)
-            return null;
-        SDCard byUser = SDCardRepository.findByUser(userRepo.findByEmailId(emailId));
-        return new String(Files.readAllBytes(Paths.get(byUser.getJsonLocation())));
+        SDCard byUser = SDCardRepository.findByUser(userRepo.findByEmailId(AuthUtils.getLoggedInUserEmailId()));
+
+        if (byUser == null || byUser.getJsonLocation() == null) {
+            return "no record found 1";
+        } else if (!new File(byUser.getJsonLocation()).exists() || !new File(byUser.getJsonLocation()).isFile()) {
+            return "no record found 2";
+        } else
+            return new String(Files.readAllBytes(Paths.get(byUser.getJsonLocation())));
     }
 
 }
