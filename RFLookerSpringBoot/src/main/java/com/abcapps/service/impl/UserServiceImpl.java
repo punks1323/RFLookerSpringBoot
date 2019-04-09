@@ -14,7 +14,7 @@ import java.util.UUID;
 
 
 import com.abcapps.entity.SDCard;
-import com.abcapps.repo.DirectoryRepository;
+import com.abcapps.repo.SDCardRepository;
 import com.abcapps.utils.AuthUtils;
 import com.abcapps.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepo;
 
     @Autowired
-    private DirectoryRepository directoryRepository;
+    private SDCardRepository SDCardRepository;
 
     @Autowired
     private MailService mailService;
@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserService {
 
             FileCopyUtils.copy(fileTree.getBytes(StandardCharsets.UTF_8), userDataFile);
             User byEmailId = userRepo.findByEmailId(emailId);
-            SDCard SDCard = directoryRepository.findByUser(byEmailId);
+            SDCard SDCard = SDCardRepository.findByUser(byEmailId);
             if (SDCard == null) {
                 SDCard = new SDCard();
                 SDCard.setUser(byEmailId);
@@ -182,8 +182,7 @@ public class UserServiceImpl implements UserService {
             } else {
                 SDCard.setJsonLocation(userDataFile.getCanonicalPath());
             }
-            directoryRepository.save(SDCard);
-            return true;
+            return SDCardRepository.save(SDCard) != null;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -195,7 +194,7 @@ public class UserServiceImpl implements UserService {
         String emailId = AuthUtils.getLoggedInUser();
         if (emailId == null)
             return null;
-        SDCard byUser = directoryRepository.findByUser(userRepo.findByEmailId(emailId));
+        SDCard byUser = SDCardRepository.findByUser(userRepo.findByEmailId(emailId));
         return new String(Files.readAllBytes(Paths.get(byUser.getJsonLocation())));
     }
 
