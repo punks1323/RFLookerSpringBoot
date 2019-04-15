@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
-public class RFLController {
-    Logger log = LoggerFactory.getLogger(RFLController.class);
+public class FileTreeController {
+    Logger log = LoggerFactory.getLogger(FileTreeController.class);
 
     @Autowired
     UserService userService;

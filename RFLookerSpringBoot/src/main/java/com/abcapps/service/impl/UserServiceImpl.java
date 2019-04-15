@@ -68,6 +68,13 @@ public class UserServiceImpl implements UserService {
     Environment env;
 
     @Override
+    public User loginCheck(String emailId, String password) {
+        if (emailId == null || password == null || emailId.isEmpty() || password.isEmpty())
+            return null;
+        return userRepo.findByEmailIdAndPassword(emailId, password);
+    }
+
+    @Override
     public User saveUser(final User user)
             throws EmailIdAlreadyExists, PasswordNotMatchException, MobileNoAlreadyExists {
         log.debug("Registration request for " + user.getEmailId() + "\t" + user.getMobileNo());
@@ -92,7 +99,7 @@ public class UserServiceImpl implements UserService {
         user.setEmailIdUuid(UUID.randomUUID().toString());
         user.setMobileNoVerified(false);
         user.setRegistrationDate(new Date());
-        user.setActive(false);
+        user.setIsActive(Boolean.FALSE);
         user.getMobile().setLastAccess(new Date());
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -137,7 +144,7 @@ public class UserServiceImpl implements UserService {
             User user = userRepo.findByEmailIdUuid(URLDecoder.decode(aesMask.decode(uuid), "UTF-8"));
             if (user != null) {
                 user.setEmailIdVerified(true);
-                user.setActive(true);
+                user.setIsActive(Boolean.TRUE);
                 user = userRepo.save(user);
                 log.info(user.getEmailId() + " is verified.");
                 return true;

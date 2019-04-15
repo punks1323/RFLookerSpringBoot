@@ -76,7 +76,7 @@ public class User {
     Date registrationDate;
 
     @JsonIgnore
-    boolean isActive;
+    Boolean isActive;
 
     @JsonProperty(access = Access.WRITE_ONLY)
     @NotNull

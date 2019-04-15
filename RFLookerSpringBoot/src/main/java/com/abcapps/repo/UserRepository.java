@@ -9,9 +9,11 @@ import com.abcapps.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	User findByEmailId(String emailId);
+    User findByEmailId(String emailId);
 
-	User findByEmailIdUuid(String emailIdUuid);
+    User findByEmailIdAndPassword(String emailId, String password);
 
-	User findByMobile(Mobile mobile);
+    User findByEmailIdUuid(String emailIdUuid);
+
+    User findByMobile(Mobile mobile);
 }
