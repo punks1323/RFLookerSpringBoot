@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
-    User loginCheck(String emailId, String password);
 
     User saveUser(User user) throws EmailIdAlreadyExists, PasswordNotMatchException, MobileNoAlreadyExists;
 
@@ -17,7 +16,8 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    boolean saveFileTree(String fileTree);
+    boolean saveFileTree(String fileTree, String deviceDetails);
 
     String getFileTree() throws IOException;
+
 }

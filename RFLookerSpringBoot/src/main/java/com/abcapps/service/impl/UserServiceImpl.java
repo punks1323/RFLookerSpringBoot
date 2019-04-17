@@ -17,6 +17,7 @@ import com.abcapps.entity.SDCard;
 import com.abcapps.repo.SDCardRepository;
 import com.abcapps.utils.AuthUtils;
 import com.abcapps.utils.StringUtils;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
@@ -66,13 +67,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     Environment env;
-
-    @Override
-    public User loginCheck(String emailId, String password) {
-        if (emailId == null || password == null || emailId.isEmpty() || password.isEmpty())
-            return null;
-        return userRepo.findByEmailIdAndPassword(emailId, password);
-    }
 
     @Override
     public User saveUser(final User user)
@@ -163,7 +157,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean saveFileTree(String fileTree) {
+    public boolean saveFileTree(String fileTree, String deviceDetails) {
         try {
             String emailId = AuthUtils.getLoggedInUserEmailId();
             if (emailId == null)
@@ -172,24 +166,40 @@ public class UserServiceImpl implements UserService {
             File dir = new File(env.getProperty("user.secure.data"), emailId);
             if (!dir.exists())
                 dir.mkdirs();
-            else
-                FileUtils.cleanDirectory(dir);
 
-            long currentTimeMillis = System.currentTimeMillis();
-            File userDataFile = new File(dir, currentTimeMillis + ".txt");
+            File fileTreeFile = new File(dir, "fileTree.txt");
+            FileCopyUtils.copy(fileTree.getBytes(StandardCharsets.UTF_8), fileTreeFile);
 
 
-            FileCopyUtils.copy(fileTree.getBytes(StandardCharsets.UTF_8), userDataFile);
-            User byEmailId = userRepo.findByEmailId(emailId);
-            SDCard SDCard = SDCardRepository.findByUser(byEmailId);
-            if (SDCard == null) {
-                SDCard = new SDCard();
-                SDCard.setUser(byEmailId);
-                SDCard.setJsonLocation(userDataFile.getCanonicalPath());
+            File deviceDetailsFile = new File(dir, "deviceDetails.txt");
+            if (!deviceDetailsFile.exists()) {
+                FileCopyUtils.copy(deviceDetails.getBytes(StandardCharsets.UTF_8), deviceDetailsFile);
+                log.info("New device details received for user :: " + emailId);
             } else {
-                SDCard.setJsonLocation(userDataFile.getCanonicalPath());
+                JsonNode fileJsonNode = mapper.readValue(deviceDetailsFile, JsonNode.class);
+                JsonNode receivedJsonNode = mapper.readValue(deviceDetails, JsonNode.class);
+
+                if (fileJsonNode != null && receivedJsonNode != null && !fileJsonNode.get("androidSecureId").isNull() && !fileJsonNode.get("androidSecureId").asText().equals(receivedJsonNode.get("androidSecureId").asText())) {
+                    log.info("New device details updated for user :: " + emailId);
+                    FileCopyUtils.copy(deviceDetailsFile, new File(dir, "deviceDetails_" + System.currentTimeMillis() + ".txt"));
+                    FileCopyUtils.copy(deviceDetails.getBytes(StandardCharsets.UTF_8), deviceDetailsFile);
+                } else {
+                    log.info("Device details already saved.");
+                }
             }
-            return SDCardRepository.save(SDCard) != null;
+
+            User byEmailId = userRepo.findByEmailId(emailId);
+            SDCard sdCard = SDCardRepository.findByUser(byEmailId);
+            if (sdCard == null) {
+                sdCard = new SDCard();
+                sdCard.setUser(byEmailId);
+                sdCard.setFileTreeLocation(fileTreeFile.getCanonicalPath());
+                sdCard.setDeviceDetailsLocation(deviceDetailsFile.getCanonicalPath());
+            } else {
+                sdCard.setFileTreeLocation(fileTreeFile.getCanonicalPath());
+                sdCard.setDeviceDetailsLocation(deviceDetailsFile.getCanonicalPath());
+            }
+            return SDCardRepository.save(sdCard) != null;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -200,12 +210,11 @@ public class UserServiceImpl implements UserService {
     public String getFileTree() throws IOException {
         SDCard byUser = SDCardRepository.findByUser(userRepo.findByEmailId(AuthUtils.getLoggedInUserEmailId()));
 
-        if (byUser == null || byUser.getJsonLocation() == null) {
+        if (byUser == null || byUser.getFileTreeLocation() == null) {
             return "no record found 1";
-        } else if (!new File(byUser.getJsonLocation()).exists() || !new File(byUser.getJsonLocation()).isFile()) {
+        } else if (!new File(byUser.getFileTreeLocation()).exists() || !new File(byUser.getFileTreeLocation()).isFile()) {
             return "no record found 2";
         } else
-            return new String(Files.readAllBytes(Paths.get(byUser.getJsonLocation())));
+            return new String(Files.readAllBytes(Paths.get(byUser.getFileTreeLocation())));
     }
-
 }

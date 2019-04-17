@@ -19,9 +19,9 @@ public class FileTreeController {
     UserService userService;
 
     @PostMapping(value = "/saveRFLFileTree")
-    public ResponseEntity<Object> saveRFLFileTree(@RequestBody String fileTree) {
+    public ResponseEntity<Object> saveRFLFileTree(@RequestParam("fileTree") String fileTree, @RequestParam("deviceDetails") String deviceDetails) {
         try {
-            if (userService.saveFileTree(fileTree)) {
+            if (userService.saveFileTree(fileTree, deviceDetails)) {
                 return new ResponseEntity<>("OK"
                         , HttpStatus.OK);
             }

@@ -17,5 +17,6 @@ public class SDCard {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String jsonLocation;
+    private String fileTreeLocation;
+    private String deviceDetailsLocation;
 }

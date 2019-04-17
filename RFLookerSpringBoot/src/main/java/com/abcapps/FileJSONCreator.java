@@ -7,7 +7,7 @@ import java.io.File;
 
 public class FileJSONCreator {
     public static void main(String[] args) {
-        File file = new File("C:\\Users\\Pankaj");
+        File file = new File("/home/pankaj/Desktop/smartcc_release_QA");
         JSONArray dirJSONArr = new JSONArray();
         JSONObject fileJSONObj = new JSONObject();
         //p(createJSONTree(file, dirJSONArr, fileJSONObj).toString());

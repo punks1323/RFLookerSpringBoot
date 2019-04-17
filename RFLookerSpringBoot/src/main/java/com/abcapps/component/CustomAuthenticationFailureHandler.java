@@ -27,7 +27,7 @@ public class CustomAuthenticationFailureHandler
             HttpServletResponse response,
             AuthenticationException exception)
             throws IOException, ServletException {
-        log.info("::::::::::LOGIN FAIL::::CustomAuthenticationFailureHandler::");
+        log.info("::::::::::LOGIN FAIL::::CustomAuthenticationFailureHandler::\n");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         Map<String, Object> data = new HashMap<>();
         data.put(

@@ -49,17 +49,4 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/loginCheck")
-    public ResponseEntity<User> getUser(@RequestParam String emailId, @RequestParam String password) {
-        log.info("fetching user details for :: " + emailId);
-        try {
-            User userByEmailId = userService.loginCheck(emailId, password);
-            return new ResponseEntity<User>(userByEmailId, userByEmailId != null ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
 }
