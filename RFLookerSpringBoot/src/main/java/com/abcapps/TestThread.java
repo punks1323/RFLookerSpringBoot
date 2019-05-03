@@ -5,7 +5,7 @@ public class TestThread {
     static Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            System.out.println(A.getInstance());
+
         }
     };
 

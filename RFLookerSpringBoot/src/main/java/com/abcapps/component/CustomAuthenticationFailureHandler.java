@@ -1,5 +1,6 @@
 package com.abcapps.component;
 
+import com.abcapps.utils.AppLogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,6 @@ import java.util.Map;
 public class CustomAuthenticationFailureHandler
         implements AuthenticationFailureHandler {
 
-    public static final Logger log = LoggerFactory.getLogger(CustomAuthenticationFailureHandler.class);
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -27,7 +27,7 @@ public class CustomAuthenticationFailureHandler
             HttpServletResponse response,
             AuthenticationException exception)
             throws IOException, ServletException {
-        log.info("::::::::::LOGIN FAIL::::CustomAuthenticationFailureHandler::\n");
+        AppLogger.i("::::::::::LOGIN FAIL::::CustomAuthenticationFailureHandler::\n");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         Map<String, Object> data = new HashMap<>();
         data.put(

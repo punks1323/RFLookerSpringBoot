@@ -35,7 +35,6 @@ import java.io.IOException;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    public static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -81,6 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/user/**").hasRole("USER")
+                .antMatchers("/aws/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

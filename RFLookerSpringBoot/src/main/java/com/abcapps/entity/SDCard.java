@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Entity
 @Setter
 @Getter
+@Table(name = "sdcard")
 public class SDCard {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

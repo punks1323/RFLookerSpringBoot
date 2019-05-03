@@ -1,5 +1,6 @@
 package com.abcapps.component;
 
+import com.abcapps.utils.AppLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
@@ -13,11 +14,10 @@ import java.io.IOException;
 
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    public static final Logger log = LoggerFactory.getLogger(RestAuthenticationEntryPoint.class);
 
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        log.info("::::::::::LOGIN FAIL::::RestAuthenticationEntryPoint::");
+        AppLogger.i("::::::::::LOGIN FAIL::::RestAuthenticationEntryPoint::");
         httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                 "Unauthorized");
     }

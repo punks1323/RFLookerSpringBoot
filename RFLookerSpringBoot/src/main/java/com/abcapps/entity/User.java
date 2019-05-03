@@ -22,6 +22,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
+@Table(name = "User")
 public class User {
 
     @Id
@@ -80,9 +81,14 @@ public class User {
 
     @JsonProperty(access = Access.WRITE_ONLY)
     @NotNull
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "mobile_imei")
     Mobile mobile;
+
+    @JsonIgnore
+    @Null
+    @OneToOne(cascade = CascadeType.ALL)
+    AwsInfo awsInfo;
 
     @JsonIgnore
     @ManyToMany

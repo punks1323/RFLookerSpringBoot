@@ -1,6 +1,6 @@
-package com.abcapps.component.impl;
+package com.abcapps.service.impl;
 
-import com.abcapps.component.AESMask;
+import com.abcapps.service.AESMask;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.BadPaddingException;

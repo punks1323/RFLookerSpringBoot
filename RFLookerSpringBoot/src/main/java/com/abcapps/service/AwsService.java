@@ -1,8 +1,14 @@
 package com.abcapps.service;
 
+import com.abcapps.entity.User;
+
 public interface AwsService {
 
-    void createTopicIfNotExists(String topic);
+    void createPlatformApplications();
 
-    void subscribe(String topic, String deviceId);
+    void createTopics();
+
+    void updateEndpoint(String token);
+
+
 }

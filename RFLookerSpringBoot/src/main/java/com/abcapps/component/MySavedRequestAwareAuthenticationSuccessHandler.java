@@ -1,6 +1,7 @@
 package com.abcapps.component;
 
 import com.abcapps.security.WebSecurityConfig;
+import com.abcapps.utils.AppLogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,6 @@ import java.util.Map;
 public class MySavedRequestAwareAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private RequestCache requestCache = new HttpSessionRequestCache();
 
-    public static final Logger log = LoggerFactory.getLogger(MySavedRequestAwareAuthenticationSuccessHandler.class);
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -33,7 +33,7 @@ public class MySavedRequestAwareAuthenticationSuccessHandler extends SimpleUrlAu
             HttpServletResponse response,
             Authentication authentication)
             throws ServletException, IOException {
-        log.info("::::::::::LOGIN SUCCESS::::::");
+        AppLogger.i("::::::::::LOGIN SUCCESS::::::");
 
         Map<String, Object> data = new HashMap<>();
         data.put(

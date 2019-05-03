@@ -1,4 +1,4 @@
-package com.abcapps.component;
+package com.abcapps.service;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;

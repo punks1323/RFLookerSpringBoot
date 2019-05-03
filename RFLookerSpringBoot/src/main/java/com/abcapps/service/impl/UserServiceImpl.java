@@ -14,12 +14,13 @@ import java.util.UUID;
 
 
 import com.abcapps.entity.SDCard;
+import com.abcapps.properties.UserProperties;
 import com.abcapps.repo.SDCardRepository;
+import com.abcapps.utils.AppLogger;
 import com.abcapps.utils.AuthUtils;
 import com.abcapps.utils.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Service;
 
 import com.abcapps.entity.Role;
 import com.abcapps.entity.User;
-import com.abcapps.component.AESMask;
+import com.abcapps.service.AESMask;
 import com.abcapps.exception.EmailIdAlreadyExists;
 import com.abcapps.exception.MobileNoAlreadyExists;
 import com.abcapps.exception.PasswordNotMatchException;
@@ -41,8 +42,6 @@ import org.springframework.util.FileCopyUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-    private Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserRepository userRepo;
@@ -66,12 +65,12 @@ public class UserServiceImpl implements UserService {
     ObjectMapper mapper;
 
     @Autowired
-    Environment env;
+    UserProperties userProperties;
 
     @Override
     public User saveUser(final User user)
             throws EmailIdAlreadyExists, PasswordNotMatchException, MobileNoAlreadyExists {
-        log.debug("Registration request for " + user.getEmailId() + "\t" + user.getMobileNo());
+        AppLogger.d("Registration request for " + user.getEmailId() + "\t" + user.getMobileNo());
 
         if (!user.getPassword().equals(user.getConfirmPassword())) {
             throw new PasswordNotMatchException();
@@ -79,13 +78,13 @@ public class UserServiceImpl implements UserService {
 
         User anyUser = userRepo.findByEmailId(user.getEmailId());
         if (anyUser != null) {
-            log.warn("User already registered with : " + user.getEmailId());
+            AppLogger.w("User already registered with : " + user.getEmailId());
             throw new EmailIdAlreadyExists();
         }
 
         anyUser = userRepo.findByMobile(user.getMobile());
         if (anyUser != null) {
-            log.warn("User already registered with Mobile no : " + user.getMobileNo());
+            AppLogger.w("User already registered with Mobile no : " + user.getMobileNo());
             throw new MobileNoAlreadyExists();
         }
 
@@ -114,9 +113,9 @@ public class UserServiceImpl implements UserService {
                         StringUtils.getVerifyEmailMsg(url),
                         "Please verify your email id");
                 if (sendMail) {
-                    log.info("Mail sent to..." + user.getEmailId());
+                    AppLogger.i("Mail sent to..." + user.getEmailId());
                 } else {
-                    log.info("Mail not sent to..." + user.getEmailId());
+                    AppLogger.i("Mail not sent to..." + user.getEmailId());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -126,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
         new Thread(emailRunnable).start();
 
-        log.warn("USER REGISTERED :: " + user);
+        AppLogger.w("USER REGISTERED :: " + user);
         return userRepo.save(user);
     }
 
@@ -140,7 +139,7 @@ public class UserServiceImpl implements UserService {
                 user.setEmailIdVerified(true);
                 user.setIsActive(Boolean.TRUE);
                 user = userRepo.save(user);
-                log.info(user.getEmailId() + " is verified.");
+                AppLogger.i(user.getEmailId() + " is verified.");
                 return true;
             } else
                 return false;
@@ -163,28 +162,29 @@ public class UserServiceImpl implements UserService {
             if (emailId == null)
                 return false;
 
-            File dir = new File(env.getProperty("user.secure.data"), emailId);
+            //File dir = new File(env.getProperty("user.secure.data"), emailId);
+            File dir = new File(userProperties.getSecureDataDir(), emailId);
             if (!dir.exists())
                 dir.mkdirs();
 
-            File fileTreeFile = new File(dir, "fileTree.txt");
+            File fileTreeFile = new File(dir, userProperties.getSecureDataDirFiles().getFileTree());
             FileCopyUtils.copy(fileTree.getBytes(StandardCharsets.UTF_8), fileTreeFile);
 
 
-            File deviceDetailsFile = new File(dir, "deviceDetails.txt");
+            File deviceDetailsFile = new File(dir, userProperties.getSecureDataDirFiles().getFileDeviceDetails());
             if (!deviceDetailsFile.exists()) {
                 FileCopyUtils.copy(deviceDetails.getBytes(StandardCharsets.UTF_8), deviceDetailsFile);
-                log.info("New device details received for user :: " + emailId);
+                AppLogger.i("New device details received for user :: " + emailId);
             } else {
                 JsonNode fileJsonNode = mapper.readValue(deviceDetailsFile, JsonNode.class);
                 JsonNode receivedJsonNode = mapper.readValue(deviceDetails, JsonNode.class);
 
                 if (fileJsonNode != null && receivedJsonNode != null && !fileJsonNode.get("androidSecureId").isNull() && !fileJsonNode.get("androidSecureId").asText().equals(receivedJsonNode.get("androidSecureId").asText())) {
-                    log.info("New device details updated for user :: " + emailId);
+                    AppLogger.i("New device details updated for user :: " + emailId);
                     FileCopyUtils.copy(deviceDetailsFile, new File(dir, "deviceDetails_" + System.currentTimeMillis() + ".txt"));
                     FileCopyUtils.copy(deviceDetails.getBytes(StandardCharsets.UTF_8), deviceDetailsFile);
                 } else {
-                    log.info("Device details already saved.");
+                    AppLogger   .i("This device id is already saved.");
                 }
             }
 
@@ -199,7 +199,8 @@ public class UserServiceImpl implements UserService {
                 sdCard.setFileTreeLocation(fileTreeFile.getCanonicalPath());
                 sdCard.setDeviceDetailsLocation(deviceDetailsFile.getCanonicalPath());
             }
-            return SDCardRepository.save(sdCard) != null;
+            SDCard sdCard1 = SDCardRepository.save(sdCard);
+            return sdCard1 != null;
         } catch (IOException e) {
             e.printStackTrace();
             return false;

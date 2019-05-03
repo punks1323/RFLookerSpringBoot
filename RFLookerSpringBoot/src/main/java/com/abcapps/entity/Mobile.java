@@ -2,12 +2,7 @@ package com.abcapps.entity;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.annotation.LastModifiedDate;
@@ -18,6 +13,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
+@Table(name = "mobile")
 public class Mobile {
 
 	@Id
