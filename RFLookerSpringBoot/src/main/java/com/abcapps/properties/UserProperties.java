@@ -14,13 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 public class UserProperties {
     String secureDataDir;
     String uploadDir;
-
-    SecureDataDirFiles secureDataDirFiles;
-
-    @Setter
-    @Getter
-    public class SecureDataDirFiles {
-        String fileTree;
-        String fileDeviceDetails;
-    }
+    String fileTree;
+    String fileDeviceDetails;
 }
+

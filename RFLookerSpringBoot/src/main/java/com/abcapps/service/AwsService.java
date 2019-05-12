@@ -1,7 +1,5 @@
 package com.abcapps.service;
 
-import com.abcapps.entity.User;
-
 public interface AwsService {
 
     void createPlatformApplications();
@@ -10,5 +8,6 @@ public interface AwsService {
 
     void updateEndpoint(String token);
 
+    void pullFileFromDevice(String path);
 
 }

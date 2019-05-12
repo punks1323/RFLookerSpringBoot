@@ -35,6 +35,7 @@ public class FileJSONCreator {
 
             JSONObject dirJSONObject = new JSONObject();
             dirJSONObject.put("type", "D");
+            dirJSONObject.put("name", name);
             JSONArray dirJSONArr = new JSONArray();
             dirJSONObject.put(name, dirJSONArr);
             fileJSONArray.put(dirJSONObject);

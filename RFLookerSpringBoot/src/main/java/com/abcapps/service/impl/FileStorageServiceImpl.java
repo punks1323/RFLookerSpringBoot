@@ -4,6 +4,7 @@ import com.abcapps.exception.FileStorageException;
 import com.abcapps.exception.MyFileNotFoundException;
 import com.abcapps.properties.UserProperties;
 import com.abcapps.service.FileStorageService;
+import com.abcapps.utils.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -13,22 +14,31 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
-    private final Path fileStorageLocation;
+    private Path fileStorageLocation;
 
     @Autowired
-    public FileStorageServiceImpl(UserProperties userProperties) {
-        this.fileStorageLocation = Paths.get(userProperties.getUploadDir())
+    UserProperties userProperties;
+
+    @Autowired
+    DownloadManagerServiceImpl downloadManagerService;
+
+    public FileStorageServiceImpl() {
+
+    }
+
+    @Override
+    public String storeFile(MultipartFile file) {
+        String loggedInUserEmailId = AuthUtils.getLoggedInUserEmailId();
+        this.fileStorageLocation = Paths.get(userProperties.getSecureDataDir() + File.separator + loggedInUserEmailId + File.separator + userProperties.getUploadDir())
                 .toAbsolutePath().normalize();
 
         try {
@@ -36,10 +46,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         } catch (Exception ex) {
             throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
         }
-    }
 
-    @Override
-    public String storeFile(MultipartFile file) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -53,6 +60,8 @@ public class FileStorageServiceImpl implements FileStorageService {
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
+            downloadManagerService.setStatusUploadComplete();
+
             return fileName;
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
@@ -62,6 +71,10 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Override
     public Resource loadFileAsResource() {
         try {
+            String loggedInUserEmailId = AuthUtils.getLoggedInUserEmailId();
+            this.fileStorageLocation = Paths.get(userProperties.getSecureDataDir() + File.separator + loggedInUserEmailId + File.separator + userProperties.getUploadDir())
+                    .toAbsolutePath().normalize();
+
             List<Path> sortedFileList = Files.list(fileStorageLocation).sorted((p1, p2) -> {
                 try {
                     return Long.compare(Files.getLastModifiedTime(p1).toMillis(), Files.getLastModifiedTime(p2).toMillis());

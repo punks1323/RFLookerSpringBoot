@@ -4,6 +4,7 @@ import com.abcapps.entity.AwsInfo;
 import com.abcapps.entity.User;
 import com.abcapps.repo.UserRepository;
 import com.abcapps.service.AwsService;
+import com.abcapps.service.DownloadManagerService;
 import com.abcapps.utils.AuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,12 @@ public class AwsController {
     @PostMapping("/sendToken")
     private ResponseEntity saveMobileDeviceToken(@RequestParam("token") String token) {
         awsService.updateEndpoint(token);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/pullFileFromDevice")
+    private ResponseEntity pullFileFromDevice(@RequestParam("filePath") String filePath) {
+        awsService.pullFileFromDevice(filePath);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

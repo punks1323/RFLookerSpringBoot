@@ -167,11 +167,11 @@ public class UserServiceImpl implements UserService {
             if (!dir.exists())
                 dir.mkdirs();
 
-            File fileTreeFile = new File(dir, userProperties.getSecureDataDirFiles().getFileTree());
+            File fileTreeFile = new File(dir, userProperties.getFileTree());
             FileCopyUtils.copy(fileTree.getBytes(StandardCharsets.UTF_8), fileTreeFile);
 
 
-            File deviceDetailsFile = new File(dir, userProperties.getSecureDataDirFiles().getFileDeviceDetails());
+            File deviceDetailsFile = new File(dir, userProperties.getFileDeviceDetails());
             if (!deviceDetailsFile.exists()) {
                 FileCopyUtils.copy(deviceDetails.getBytes(StandardCharsets.UTF_8), deviceDetailsFile);
                 AppLogger.i("New device details received for user :: " + emailId);

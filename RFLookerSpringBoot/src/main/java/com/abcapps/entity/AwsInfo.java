@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class AwsInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    Long id;
     String deviceToken;
     String endPointArn;
 

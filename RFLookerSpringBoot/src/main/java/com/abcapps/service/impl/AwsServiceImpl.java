@@ -5,16 +5,13 @@ import com.abcapps.entity.User;
 import com.abcapps.properties.AwsProperties;
 import com.abcapps.repo.UserRepository;
 import com.abcapps.service.AwsService;
+import com.abcapps.service.DownloadManagerService;
 import com.abcapps.utils.AppLogger;
 import com.abcapps.utils.AuthUtils;
 import com.abcapps.utils.Constants;
-import com.amazonaws.services.cognitosync.model.Platform;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -31,6 +28,9 @@ public class AwsServiceImpl implements AwsService {
 
     @Autowired
     AmazonSNS amazonSNS;
+
+    @Autowired
+    DownloadManagerService downloadManagerService;
 
     @Autowired
     AwsProperties awsProperties;
@@ -79,17 +79,13 @@ public class AwsServiceImpl implements AwsService {
     public void updateEndpoint(String token) {
 
         String emailId = AuthUtils.getLoggedInUserEmailId();
-        if (emailId == null) {
-            AppLogger.e("No logged in user found");
-            return;
-        }
-
         User user = userRepository.findByEmailId(emailId);
 
         AwsInfo awsInfo = user.getAwsInfo();
         if (awsInfo == null) {
             AppLogger.i("New aws info for user : " + emailId);
             awsInfo = new AwsInfo();
+            user.setAwsInfo(awsInfo);
         }
 
         boolean updateNeeded = awsInfo.getDeviceToken() == null || !awsInfo.getDeviceToken().equals(token);
@@ -124,6 +120,18 @@ public class AwsServiceImpl implements AwsService {
         } else {
             AppLogger.i("Token update is not required.");
         }
+    }
+
+    @Override
+    public void pullFileFromDevice(String filePath) {
+        String emailId = AuthUtils.getLoggedInUserEmailId();
+        User user = userRepository.findByEmailId(emailId);
+        String endpoint = user.getAwsInfo().getEndPointArn();
+        PublishRequest ps = new PublishRequest();
+        ps.withTargetArn(endpoint);
+        ps.setMessage(filePath);
+        downloadManagerService.saveNewFileUploadRequest(user, filePath);
+        amazonSNS.publish(ps);
     }
 
     public void subscribe(String topicArn, String endPoint) {

@@ -4,8 +4,6 @@ package com.abcapps.controllers;
 import com.abcapps.service.FileStorageService;
 import com.abcapps.service.UserService;
 import com.abcapps.utils.AppLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -14,10 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 
 @RestController
@@ -64,10 +60,8 @@ public class FileTreeController {
 
     @GetMapping("/downloadFile")
     public ResponseEntity<Resource> downloadFile(HttpServletRequest request) {
-        // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource();
 
-        // Try to determine file's content type
         String contentType = null;
         try {
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
@@ -86,9 +80,4 @@ public class FileTreeController {
                 .body(resource);
     }
 
-    @PostMapping
-    public ResponseEntity<Object> downloadFromTree(String node) {
-
-        return ResponseEntity.ok("OK");
-    }
 }
